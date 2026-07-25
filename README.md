@@ -122,6 +122,8 @@ NODE_OPTIONS=--openssl-legacy-provider npm start
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
 
+Layout debug colors are disabled by default. If you intentionally need the old random layout-box backgrounds while working on flex sizing, start with `DEBUG_BOXES=true`; do not use the generic `DEBUG` environment variable for this.
+
 Verified on 2026-07-25:
 
 - `npm run build` passed with `NODE_OPTIONS=--openssl-legacy-provider`
