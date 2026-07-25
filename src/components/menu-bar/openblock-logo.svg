@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 130">
+  <defs>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <title>Venago</title>
+  <!-- Sparkle accents -->
+  <circle cx="105" cy="18" r="4" fill="#F4C545" opacity="0.95"/>
+  <circle cx="8" cy="70" r="3" fill="#7DD3C0" opacity="0.9"/>
+  <!-- Rounded square mark (coral) -->
+  <rect fill="#48B0B0" x="10" y="12" width="106" height="106" rx="24" ry="24" filter="url(#soft-shadow)"/>
+  <!-- White V -->
+  <path d="M 32 36 Q 32 32 36 32 L 50 32 Q 54 32 55 36 L 65 80 L 75 36 Q 76 32 80 32 L 94 32 Q 98 32 96 36 L 76 108 Q 75 112 71 112 L 59 112 Q 55 112 54 108 Z" fill="#ffffff"/>
+  <!-- Handwritten Venago wordmark (Caveat) -->
+  <text x="134" y="92" font-family="'Caveat', 'Comic Sans MS', cursive" font-weight="700" font-size="92" fill="#48B0B0" letter-spacing="1">Venago</text>
+</svg>

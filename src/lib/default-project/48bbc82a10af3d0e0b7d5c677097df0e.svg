@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 186 160" enable-background="new 0 0 186 160" style="stroke-linejoin:round;stroke-linecap:round">
+  <defs>
+    <linearGradient id="furG2" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFD2BD"/>
+      <stop offset="100%" stop-color="#F4A28C"/>
+    </linearGradient>
+    <radialGradient id="blush2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF8FA8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#FF8FA8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Ground shadow -->
+  <ellipse cx="93" cy="151" rx="46" ry="3.5" fill="#1A2B3D" opacity="0.10"/>
+
+  <!-- Tail (up/wagging) -->
+  <path d="M 138 122 Q 168 110 170 90 Q 172 70 158 68 Q 150 70 152 82 Q 152 96 144 114 Z" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2"/>
+
+  <!-- Body -->
+  <ellipse cx="93" cy="125" rx="42" ry="24" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2.2"/>
+
+  <!-- Front paws -->
+  <ellipse cx="76" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+  <ellipse cx="110" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+
+  <!-- Right paw RAISED (waving) -->
+  <ellipse cx="148" cy="78" rx="10" ry="8" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2.2"/>
+  <!-- Arm connecting to raised paw -->
+  <path d="M 130 100 Q 140 88 146 80" fill="none" stroke="#9C5A45" stroke-width="2.5"/>
+
+  <!-- Ears (slightly perked) -->
+  <path d="M 50 48 Q 54 14 78 30 Q 70 40 50 48 Z" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2.2"/>
+  <path d="M 136 48 Q 132 14 108 30 Q 116 40 136 48 Z" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2.2"/>
+  <path d="M 58 42 Q 60 22 74 34 Q 70 40 58 42 Z" fill="#FFC0D0"/>
+  <path d="M 128 42 Q 126 22 112 34 Q 116 40 128 42 Z" fill="#FFC0D0"/>
+
+  <!-- Head -->
+  <ellipse cx="93" cy="70" rx="48" ry="42" fill="url(#furG2)" stroke="#9C5A45" stroke-width="2.5"/>
+
+  <!-- Cheek blush (bigger - excited) -->
+  <ellipse cx="56" cy="84" rx="12" ry="7" fill="url(#blush2)"/>
+  <ellipse cx="130" cy="84" rx="12" ry="7" fill="url(#blush2)"/>
+
+  <!-- Happy closed eyes (^_^) -->
+  <path d="M 64 68 Q 74 58 84 68" fill="none" stroke="#2C1B3D" stroke-width="3"/>
+  <path d="M 102 68 Q 112 58 122 68" fill="none" stroke="#2C1B3D" stroke-width="3"/>
+
+  <!-- Small nose -->
+  <path d="M 89 88 Q 93 86 97 88 Q 95 93 93 93 Q 91 93 89 88 Z" fill="#E58FA0" stroke="#9C5A45" stroke-width="1"/>
+
+  <!-- Big happy open smile -->
+  <path d="M 82 92 Q 93 106 104 92 Q 93 102 82 92 Z" fill="#2C1B3D"/>
+  <path d="M 86 94 Q 93 102 100 94 Q 93 99 86 94 Z" fill="#FF7B94"/>
+
+  <!-- Whiskers -->
+  <path d="M 36 88 Q 46 88 56 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+  <path d="M 36 94 Q 46 94 56 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+  <path d="M 150 88 Q 140 88 130 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+  <path d="M 150 94 Q 140 94 130 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+
+  <!-- Sparkle by raised paw -->
+  <path d="M 160 60 L 161 64 L 165 65 L 161 66 L 160 70 L 159 66 L 155 65 L 159 64 Z" fill="#F4C545" opacity="0.95"/>
+</svg>

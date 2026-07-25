@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" value="notranslate">
+    <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+    <link rel="alternate icon" href="static/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Venago — Hardware & software, engineered as one. Visual coding for STEM education.">
+    <meta name="theme-color" content="#48B0B0">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <% if (htmlWebpackPlugin.options.sentryConfig) { %>
+        <script src="https://cdn.ravenjs.com/3.22.1/raven.min.js" crossorigin="anonymous"></script>
+        <script>
+            Raven.config(<%= htmlWebpackPlugin.options.sentryConfig %>).install();
+        </script>
+    <% } %>
+    <style>
+        #pre-loading {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: #48B0B0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: -9999;
+        }
+        #pre-loading-cat-wrap {
+            position: relative;
+            width: 11rem;
+            height: 10rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        #pre-loading-cat {
+            width: 11rem;
+            height: auto;
+            animation: cat-bob 1.8s ease-in-out infinite;
+        }
+        /* Tail wags via SMIL <animateTransform>. Plus a CSS fallback for any browser
+           that deprioritizes SMIL during initial paint. */
+        #cat-tail {
+            transform-box: view-box;
+            transform-origin: 140px 122px;
+            animation: tail-wag-fallback 0.7s ease-in-out infinite;
+        }
+        @keyframes tail-wag-fallback {
+            0%, 100% { transform: rotate(-22deg); }
+            50%      { transform: rotate(22deg); }
+        }
+        #pre-loading-text {
+            font-family: 'Caveat', 'Comic Sans MS', cursive;
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin: 0.4rem 0 0 0;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        #pre-loading-sub {
+            font-family: 'Fredoka', sans-serif;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes cat-bob {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-5px); }
+        }
+    </style>
+  </head>
+  <body>
+    <div id="pre-loading">
+      <div id="pre-loading-cat-wrap">
+        <svg id="pre-loading-cat" viewBox="0 0 186 160" xmlns="http://www.w3.org/2000/svg" style="stroke-linejoin:round;stroke-linecap:round">
+          <defs>
+            <linearGradient id="loaderFurG" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="#FFD2BD"/>
+              <stop offset="100%" stop-color="#F4A28C"/>
+            </linearGradient>
+            <radialGradient id="loaderBlush" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FF8FA8" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#FF8FA8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="93" cy="151" rx="46" ry="3.5" fill="#1A2B3D" opacity="0.10"/>
+          <path id="cat-tail" d="M 138 122 Q 162 118 166 100 Q 168 84 156 80 Q 150 82 152 92 Q 152 104 144 114 Z" fill="url(#loaderFurG)" stroke="#9C5A45" stroke-width="2">
+            <animateTransform
+              attributeName="transform"
+              attributeType="XML"
+              type="rotate"
+              values="-22 140 122; 0 140 122; 22 140 122; 0 140 122; -22 140 122"
+              keyTimes="0; 0.25; 0.5; 0.75; 1"
+              dur="0.7s"
+              repeatCount="indefinite"
+              calcMode="spline"
+              keySplines="0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1"/>
+          </path>
+          <ellipse cx="93" cy="125" rx="42" ry="24" fill="url(#loaderFurG)" stroke="#9C5A45" stroke-width="2.2"/>
+          <ellipse cx="76" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+          <ellipse cx="110" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+          <path d="M 50 50 Q 54 18 78 32 Q 70 42 50 50 Z" fill="url(#loaderFurG)" stroke="#9C5A45" stroke-width="2.2"/>
+          <path d="M 136 50 Q 132 18 108 32 Q 116 42 136 50 Z" fill="url(#loaderFurG)" stroke="#9C5A45" stroke-width="2.2"/>
+          <path d="M 58 44 Q 60 26 74 36 Q 70 42 58 44 Z" fill="#FFC0D0"/>
+          <path d="M 128 44 Q 126 26 112 36 Q 116 42 128 44 Z" fill="#FFC0D0"/>
+          <ellipse cx="93" cy="70" rx="48" ry="42" fill="url(#loaderFurG)" stroke="#9C5A45" stroke-width="2.5"/>
+          <ellipse cx="56" cy="84" rx="11" ry="6" fill="url(#loaderBlush)"/>
+          <ellipse cx="130" cy="84" rx="11" ry="6" fill="url(#loaderBlush)"/>
+          <ellipse cx="74" cy="68" rx="10" ry="13" fill="#2C1B3D"/>
+          <ellipse cx="77" cy="63" rx="3.5" ry="2.8" fill="#FFFFFF"/>
+          <circle cx="71" cy="74" r="2.2" fill="#FFFFFF"/>
+          <ellipse cx="112" cy="68" rx="10" ry="13" fill="#2C1B3D"/>
+          <ellipse cx="115" cy="63" rx="3.5" ry="2.8" fill="#FFFFFF"/>
+          <circle cx="109" cy="74" r="2.2" fill="#FFFFFF"/>
+          <path d="M 89 88 Q 93 86 97 88 Q 95 93 93 93 Q 91 93 89 88 Z" fill="#E58FA0" stroke="#9C5A45" stroke-width="1"/>
+          <path d="M 93 93 Q 93 97 89 98 Q 86 98 84 96" fill="none" stroke="#9C5A45" stroke-width="1.6"/>
+          <path d="M 93 93 Q 93 97 97 98 Q 100 98 102 96" fill="none" stroke="#9C5A45" stroke-width="1.6"/>
+          <path d="M 36 88 Q 46 88 56 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+          <path d="M 36 94 Q 46 94 56 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+          <path d="M 150 88 Q 140 88 130 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+          <path d="M 150 94 Q 140 94 130 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+        </svg>
+      </div>
+      <div id="pre-loading-text">Venago</div>
+      <div id="pre-loading-sub">Loading…</div>
+    </div>
+  </body>
+</html>
