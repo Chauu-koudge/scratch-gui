@@ -13,8 +13,7 @@
     border: $stage-standard-border-width solid $ui-black-transparent;
     overflow: hidden;
 
-    /* @todo: This is for overriding the value being set somewhere. Where is it being set? */
-    background-color: transparent;
+    background-color: $ui-white;
 
     /* Allow custom touch handling to prevent scrolling on Edge */
     touch-action: none;

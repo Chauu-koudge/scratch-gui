@@ -1,9 +1,10 @@
-/* === Venago warm coral palette (kindergarten theme) === */
-$ui-primary: hsla(186, 35%, 95%, 1); /* #ECF7F8 - palest cyan */
-$ui-secondary: hsla(186, 42%, 91%, 1); /* #DEF1F3 - light cyan */
-$ui-tertiary: hsla(186, 35%, 82%, 1); /* #C0E0E4 - cyan tint */
+/* === Venago UI theme === */
+/* Keep structural surfaces neutral; use Venago color only for accents. */
+$ui-primary: hsla(220, 33%, 96%, 1); /* #F3F5F9 */
+$ui-secondary: hsla(220, 29%, 94%, 1); /* #EEF1F6 */
+$ui-tertiary: hsla(218, 31%, 90%, 1); /* #DDE4EE */
 
-$ui-modal-overlay: hsla(15, 76%, 63%, 0.9); /* 90% transparent Venago coral */
+$ui-modal-overlay: hsla(180, 41%, 49%, 0.9);
 
 $ui-white: hsla(0, 100%, 100%, 1); /* #FFFFFF */
 $ui-white-dim: hsla(0, 100%, 100%, 0.75);
@@ -12,56 +13,56 @@ $ui-transparent: hsla(0, 100%, 100%, 0);
 
 $ui-black-transparent: hsla(0, 0%, 0%, 0.15);
 
-$text-primary: hsla(25, 24%, 23%, 1); /* #4A3A2D - warm dark */
-$text-primary-transparent: hsla(25, 24%, 23%, 0.75);
+$text-primary: hsla(225, 15%, 40%, 1); /* #575E75 */
+$text-primary-transparent: hsla(225, 15%, 40%, 0.75);
 
-/* === Venago coral-family palette (theme: coral) === */
+/* === Block/category palette === */
 
-/* Motion - Venago coral (theme primary) */
+/* Motion / brand accent */
 $motion-primary: hsla(180, 41%, 49%, 1); /* #48B0B0 */
-$motion-tertiary: hsla(15, 52%, 51%, 1); /* #7B9DD1 */
-$motion-transparent: hsla(15, 76%, 63%, 0.35);
-$motion-light-transparent: hsla(15, 76%, 63%, 0.15);
+$motion-tertiary: hsla(180, 51%, 36%, 1); /* #2D8A8A */
+$motion-transparent: hsla(180, 41%, 49%, 0.35);
+$motion-light-transparent: hsla(180, 41%, 49%, 0.15);
 
-/* Looks - blush */
-$red-primary: hsla(11, 75%, 78%, 1); /* #B190CA */
-$red-tertiary: hsla(11, 41%, 59%, 1); /* #8B5FA6 */
+/* Looks */
+$red-primary: hsla(260, 100%, 70%, 1); /* #9966FF */
+$red-tertiary: hsla(260, 60%, 55%, 1);
 
-/* Sound - salmon */
-$sound-primary: hsla(18, 79%, 71%, 1); /* #F4A28C */
-$sound-tertiary: hsla(18, 36%, 54%, 1); /* #D27A65 */
+/* Sound */
+$sound-primary: hsla(300, 53%, 60%, 1); /* #CF63CF */
+$sound-tertiary: hsla(300, 48%, 50%, 1);
 
-/* Control - light coral */
-$control-primary: hsla(14, 73%, 75%, 1); /* #A8C868 */
+/* Control */
+$control-primary: hsla(38, 100%, 55%, 1); /* #FFAB19 */
 
-/* Data/Variables - soft coral */
-$data-primary: hsla(11, 70%, 71%, 1); /* #D9A85C */
+/* Data/Variables */
+$data-primary: hsla(28, 100%, 55%, 1); /* #FF8C1A */
 
-/* Pen - peach */
-$pen-primary: hsla(24, 80%, 75%, 1); /* #71BE93 */
-$pen-transparent: hsla(24, 80%, 75%, 0.25);
+/* Pen */
+$pen-primary: hsla(160, 85%, 40%, 1); /* #0FBD8C */
+$pen-transparent: hsla(160, 85%, 40%, 0.25);
 
-/* Events - medium coral (no yellow) */
-$events-primary: hsla(8, 58%, 60%, 1); /* #F4C545 */
+/* Events */
+$events-primary: hsla(45, 100%, 50%, 1); /* #FFBF00 */
 
-/* Operators - terracotta */
-$operators-primary: hsla(15, 47%, 52%, 1); /* #7B9DD1 */
+/* Operators */
+$operators-primary: hsla(120, 45%, 55%, 1); /* #59C059 */
 
-/* My Blocks - rust */
-$my-blocks-primary: hsla(13, 53%, 40%, 1); /* #94A461 */
+/* My Blocks */
+$my-blocks-primary: hsla(350, 100%, 70%, 1); /* #FF6680 */
 
-/* Sensing - lightest blush */
-$sensing-primary: hsla(15, 67%, 84%, 1); /* #7BBED1 */
+/* Sensing */
+$sensing-primary: hsla(195, 60%, 60%, 1); /* #5CB1D6 */
 
 /* Errors */
 $error-primary: hsla(0, 75%, 60%, 1); /* #E94545 */
 $error-light: hsla(0, 75%, 75%, 1);
 $error-transparent: hsla(0, 75%, 60%, 0.25);
 
-/* Extensions - light salmon */
-$extensions-primary: hsla(20, 67%, 76%, 1); /* #D9C499 */
-$extensions-tertiary: hsla(18, 36%, 65%, 1);
-$extensions-transparent: hsla(20, 67%, 76%, 0.35);
-$extensions-light: hsla(20, 67%, 92%, 1);
+/* Extensions */
+$extensions-primary: hsla(160, 85%, 40%, 1); /* #0FBD8C */
+$extensions-tertiary: hsla(160, 65%, 34%, 1);
+$extensions-transparent: hsla(160, 85%, 40%, 0.35);
+$extensions-light: hsla(160, 85%, 92%, 1);
 
-$drop-highlight: hsla(15, 76%, 80%, 1); /* lighter coral */
+$drop-highlight: hsla(180, 55%, 91%, 1); /* #DDF4F4 */
