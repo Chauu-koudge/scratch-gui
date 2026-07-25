@@ -33,19 +33,24 @@ git clone https://github.com/Venago-Innovations/scratch_packaged.git venago-bloc
 git clone https://github.com/Venago-Innovations/scratch_connectivity.git venago-link
 ```
 
-Install the editor:
+Install the local library dependencies first. `venago-vm` and `venago-blocks` are not separate services, but their package dependencies must exist because `venago-gui` symlinks them into `node_modules`.
 
 ```bash
-cd venago-gui
+cd venago-vm
 NODE_OPTIONS=--openssl-legacy-provider npm install
+
+cd ../venago-blocks
+npm install --ignore-scripts
 ```
 
-Install the bridge:
+Install the editor and bridge:
 
 ```bash
+cd ../venago-gui
+NODE_OPTIONS=--openssl-legacy-provider npm install
+
 cd ../venago-link
 npm install
-npm run fetch
 ```
 
 Run the app in two terminals.
@@ -64,6 +69,8 @@ cd ~/venago-workspace/openblock/venago-link
 npm start
 ```
 
+The first Link start may download the Arduino/toolchain bundle. Keep enough disk space free; the archive observed during clone verification was about 1 GB.
+
 Open:
 
 ```text
@@ -76,7 +83,7 @@ The browser editor connects to the local bridge at:
 ws://127.0.0.1:20111/openblock/serialport
 ```
 
-Do not commit `node_modules`, GUI `build`, Link `tools`, or Link `firmwares`. VM `dist` and Blocks compiled bundles are committed so the app can run after clone without rebuilding legacy Blockly tooling.
+Do not commit `node_modules`, GUI `build`, Link `tools`, or Link `firmwares`. VM `dist` and Blocks compiled bundles are committed so the app can run after clone without rebuilding legacy Blockly tooling. Use `npm install --ignore-scripts` in `venago-blocks` unless Python 2 is available, because the inherited install lifecycle tries to rebuild Blockly.
 
 At runtime, the GUI talks to `venago-link` over:
 
@@ -119,6 +126,7 @@ Verified on 2026-07-25:
 
 - `npm run build` passed with `NODE_OPTIONS=--openssl-legacy-provider`
 - output `build/index.html` uses title `Venago`
+- a fresh clone started successfully after installing `venago-vm`, `venago-blocks --ignore-scripts`, `venago-gui`, and `venago-link`
 
 ## Hardware Notes
 
