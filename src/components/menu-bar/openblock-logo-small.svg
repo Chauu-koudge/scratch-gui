@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130">
+  <title>Venago</title>
+  <circle cx="115" cy="14" r="4" fill="#F4C545" opacity="0.95"/>
+  <rect fill="#ffffff" x="8" y="8" width="114" height="114" rx="24" ry="24"/>
+  <path d="M 32 30 Q 32 26 36 26 L 50 26 Q 54 26 55 30 L 65 74 L 75 30 Q 76 26 80 26 L 94 26 Q 98 26 96 30 L 76 102 Q 75 106 71 106 L 59 106 Q 55 106 54 102 Z" fill="#48B0B0"/>
+</svg>

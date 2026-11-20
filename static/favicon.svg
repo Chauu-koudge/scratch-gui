@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="furG" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFD2BD"/>
+      <stop offset="100%" stop-color="#F4A28C"/>
+    </linearGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF8FA8" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#FF8FA8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="36" ry="36" fill="#48B0B0"/>
+  <g transform="translate(7,20)">
+    <ellipse cx="93" cy="151" rx="46" ry="3.5" fill="#1A2B3D" opacity="0.10"/>
+    <path d="M 138 122 Q 162 118 166 100 Q 168 84 156 80 Q 150 82 152 92 Q 152 104 144 114 Z" fill="url(#furG)" stroke="#9C5A45" stroke-width="2"/>
+    <ellipse cx="93" cy="125" rx="42" ry="24" fill="url(#furG)" stroke="#9C5A45" stroke-width="2.2"/>
+    <ellipse cx="76" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+    <ellipse cx="110" cy="146" rx="9" ry="4" fill="#FFD2BD" stroke="#9C5A45" stroke-width="2"/>
+    <path d="M 50 50 Q 54 18 78 32 Q 70 42 50 50 Z" fill="url(#furG)" stroke="#9C5A45" stroke-width="2.2"/>
+    <path d="M 136 50 Q 132 18 108 32 Q 116 42 136 50 Z" fill="url(#furG)" stroke="#9C5A45" stroke-width="2.2"/>
+    <path d="M 58 44 Q 60 26 74 36 Q 70 42 58 44 Z" fill="#FFC0D0"/>
+    <path d="M 128 44 Q 126 26 112 36 Q 116 42 128 44 Z" fill="#FFC0D0"/>
+    <ellipse cx="93" cy="70" rx="48" ry="42" fill="url(#furG)" stroke="#9C5A45" stroke-width="2.5"/>
+    <ellipse cx="56" cy="84" rx="11" ry="6" fill="url(#blush)"/>
+    <ellipse cx="130" cy="84" rx="11" ry="6" fill="url(#blush)"/>
+    <ellipse cx="74" cy="68" rx="10" ry="13" fill="#2C1B3D"/>
+    <ellipse cx="77" cy="63" rx="3.5" ry="2.8" fill="#FFFFFF"/>
+    <circle cx="71" cy="74" r="2.2" fill="#FFFFFF"/>
+    <ellipse cx="112" cy="68" rx="10" ry="13" fill="#2C1B3D"/>
+    <ellipse cx="115" cy="63" rx="3.5" ry="2.8" fill="#FFFFFF"/>
+    <circle cx="109" cy="74" r="2.2" fill="#FFFFFF"/>
+    <path d="M 89 88 Q 93 86 97 88 Q 95 93 93 93 Q 91 93 89 88 Z" fill="#E58FA0" stroke="#9C5A45" stroke-width="1"/>
+    <path d="M 93 93 Q 93 97 89 98 Q 86 98 84 96" fill="none" stroke="#9C5A45" stroke-width="1.6"/>
+    <path d="M 93 93 Q 93 97 97 98 Q 100 98 102 96" fill="none" stroke="#9C5A45" stroke-width="1.6"/>
+    <path d="M 36 88 Q 46 88 56 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+    <path d="M 36 94 Q 46 94 56 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+    <path d="M 150 88 Q 140 88 130 90" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+    <path d="M 150 94 Q 140 94 130 95" fill="none" stroke="#9C5A45" stroke-width="1.1"/>
+  </g>
+</svg>

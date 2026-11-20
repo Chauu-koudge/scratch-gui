@@ -1,0 +1,68 @@
+/* === Venago UI theme === */
+/* Keep structural surfaces neutral; use Venago color only for accents. */
+$ui-primary: hsla(220, 33%, 96%, 1); /* #F3F5F9 */
+$ui-secondary: hsla(220, 29%, 94%, 1); /* #EEF1F6 */
+$ui-tertiary: hsla(218, 31%, 90%, 1); /* #DDE4EE */
+
+$ui-modal-overlay: hsla(180, 41%, 49%, 0.9);
+
+$ui-white: hsla(0, 100%, 100%, 1); /* #FFFFFF */
+$ui-white-dim: hsla(0, 100%, 100%, 0.75);
+$ui-white-transparent: hsla(0, 100%, 100%, 0.25);
+$ui-transparent: hsla(0, 100%, 100%, 0);
+
+$ui-black-transparent: hsla(0, 0%, 0%, 0.15);
+
+$text-primary: hsla(225, 15%, 40%, 1); /* #575E75 */
+$text-primary-transparent: hsla(225, 15%, 40%, 0.75);
+
+/* === Block/category palette === */
+
+/* Motion / brand accent */
+$motion-primary: hsla(180, 41%, 49%, 1); /* #48B0B0 */
+$motion-tertiary: hsla(180, 51%, 36%, 1); /* #2D8A8A */
+$motion-transparent: hsla(180, 41%, 49%, 0.35);
+$motion-light-transparent: hsla(180, 41%, 49%, 0.15);
+
+/* Looks */
+$red-primary: hsla(260, 100%, 70%, 1); /* #9966FF */
+$red-tertiary: hsla(260, 60%, 55%, 1);
+
+/* Sound */
+$sound-primary: hsla(300, 53%, 60%, 1); /* #CF63CF */
+$sound-tertiary: hsla(300, 48%, 50%, 1);
+
+/* Control */
+$control-primary: hsla(38, 100%, 55%, 1); /* #FFAB19 */
+
+/* Data/Variables */
+$data-primary: hsla(28, 100%, 55%, 1); /* #FF8C1A */
+
+/* Pen */
+$pen-primary: hsla(160, 85%, 40%, 1); /* #0FBD8C */
+$pen-transparent: hsla(160, 85%, 40%, 0.25);
+
+/* Events */
+$events-primary: hsla(45, 100%, 50%, 1); /* #FFBF00 */
+
+/* Operators */
+$operators-primary: hsla(120, 45%, 55%, 1); /* #59C059 */
+
+/* My Blocks */
+$my-blocks-primary: hsla(350, 100%, 70%, 1); /* #FF6680 */
+
+/* Sensing */
+$sensing-primary: hsla(195, 60%, 60%, 1); /* #5CB1D6 */
+
+/* Errors */
+$error-primary: hsla(0, 75%, 60%, 1); /* #E94545 */
+$error-light: hsla(0, 75%, 75%, 1);
+$error-transparent: hsla(0, 75%, 60%, 0.25);
+
+/* Extensions */
+$extensions-primary: hsla(160, 85%, 40%, 1); /* #0FBD8C */
+$extensions-tertiary: hsla(160, 65%, 34%, 1);
+$extensions-transparent: hsla(160, 85%, 40%, 0.35);
+$extensions-light: hsla(160, 85%, 92%, 1);
+
+$drop-highlight: hsla(180, 55%, 91%, 1); /* #DDF4F4 */
