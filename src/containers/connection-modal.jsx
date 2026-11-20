@@ -42,7 +42,10 @@ class ConnectionModal extends React.Component {
         });
     }
     handleConnecting (peripheralId, peripheralName) {
-        if (this.props.isRealtimeMode) {
+        // Venago: boards without realtime (Firmata) firmware always connect with the chosen baudrate.
+        const device = this.props.deviceData.find(dev => dev.deviceId === this.props.deviceId);
+        const supportsRealtime = !!(device && device.programMode && device.programMode.includes('realtime'));
+        if (this.props.isRealtimeMode && supportsRealtime) {
             this.props.vm.connectPeripheral(this.props.deviceId, peripheralId);
         } else {
             this.props.vm.connectPeripheral(this.props.deviceId, peripheralId, parseInt(this.props.baudrate, 10));

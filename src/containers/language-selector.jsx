@@ -4,6 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {selectLocale} from '../reducers/locales';
 import {closeLanguageMenu} from '../reducers/menus';
+import {saveLocale} from '../lib/saved-locale';
 
 import LanguageSelectorComponent from '../components/language-selector/language-selector.jsx';
 
@@ -20,6 +21,7 @@ class LanguageSelector extends React.Component {
         if (this.props.messagesByLocale[newLocale]) {
             this.props.onChangeLanguage(newLocale);
             document.documentElement.lang = newLocale;
+            saveLocale(newLocale);
         }
     }
     render () {

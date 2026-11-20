@@ -21,7 +21,7 @@ const TargetPane = ({
     fileInputRef,
     hoveredTarget,
     spriteLibraryVisible,
-    onActivateBlocksTab,
+    onActivateCostumesTab,
     onChangeSpriteDirection,
     onChangeSpriteName,
     onChangeSpriteRotationStyle,
@@ -93,7 +93,7 @@ const TargetPane = ({
                 {spriteLibraryVisible ? (
                     <SpriteLibrary
                         vm={vm}
-                        onActivateBlocksTab={onActivateBlocksTab}
+                        onActivateCostumesTab={onActivateCostumesTab}
                         onRequestClose={onRequestCloseSpriteLibrary}
                     />
                 ) : null}
@@ -133,7 +133,7 @@ TargetPane.propTypes = {
         hoveredSprite: PropTypes.string,
         receivedBlocks: PropTypes.bool
     }),
-    onActivateBlocksTab: PropTypes.func.isRequired,
+    onActivateCostumesTab: PropTypes.func.isRequired,
     onChangeSpriteDirection: PropTypes.func,
     onChangeSpriteName: PropTypes.func,
     onChangeSpriteRotationStyle: PropTypes.func,

@@ -49,14 +49,18 @@
 
 .terminal-warper{
     height: 300px;
-    background-color: $motion-light-transparent;
+    background-color: #000;
     margin-bottom: 20px;
 }
 
 
 .terminal-text{
     padding: 20px;
-	white-space: pre-line;
+    white-space: pre-line;
     user-select:text;
+    color: #fff;
 }
 
+.terminal-text * {
+    color: #fff !important;
+}

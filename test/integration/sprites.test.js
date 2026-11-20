@@ -33,7 +33,17 @@ describe('Working with sprites', () => {
         await clickXpath('//button[@aria-label="Choose a Sprite"]');
         await clickText('Apple', scope.modal); // Closes modal
         await rightClickText('Apple', scope.spriteTile); // Make sure it is there
-        await clickText('Motion'); // Make sure we are back to the code tab
+        await findByText('apple', scope.costumesTab); // The new sprite's costume is selected
+        const logs = await getLogs();
+        await expect(logs).toEqual([]);
+    });
+
+    test('Selecting a sprite shows its costumes', async () => {
+        await loadUri(uri);
+
+        await clickText('Sprite1', scope.spriteTile);
+        await findByText('costume1', scope.costumesTab);
+
         const logs = await getLogs();
         await expect(logs).toEqual([]);
     });

@@ -230,6 +230,7 @@ const GUIComponent = props => {
                 {backdropLibraryVisible ? (
                     <BackdropLibrary
                         vm={vm}
+                        onActivateCostumesTab={onActivateCostumesTab}
                         onRequestClose={onRequestCloseBackdropLibrary}
                     />
                 ) : null}

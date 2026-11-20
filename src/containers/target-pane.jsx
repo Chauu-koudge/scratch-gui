@@ -29,6 +29,7 @@ class TargetPane extends React.Component {
         super(props);
         bindAll(this, [
             'handleActivateBlocksTab',
+            'handleActivateCostumesTab',
             'handleBlockDragEnd',
             'handleChangeSpriteRotationStyle',
             'handleChangeSpriteDirection',
@@ -104,6 +105,7 @@ class TargetPane extends React.Component {
         if (this.props.stage && id !== this.props.stage.id) {
             this.props.onHighlightTarget(id);
         }
+        this.handleActivateCostumesTab();
     }
     handleSurpriseSpriteClick () {
         const surpriseSprites = spriteLibraryContent.filter(sprite =>
@@ -129,6 +131,9 @@ class TargetPane extends React.Component {
     }
     handleActivateBlocksTab () {
         this.props.onActivateTab(BLOCKS_TAB_INDEX);
+    }
+    handleActivateCostumesTab () {
+        this.props.onActivateTab(COSTUMES_TAB_INDEX);
     }
     handleNewSprite (spriteJSONString) {
         return this.props.vm.addSprite(spriteJSONString)
@@ -252,6 +257,7 @@ class TargetPane extends React.Component {
                 {...componentProps}
                 fileInputRef={this.setFileInput}
                 onActivateBlocksTab={this.handleActivateBlocksTab}
+                onActivateCostumesTab={this.handleActivateCostumesTab}
                 onChangeSpriteDirection={this.handleChangeSpriteDirection}
                 onChangeSpriteName={this.handleChangeSpriteName}
                 onChangeSpriteRotationStyle={this.handleChangeSpriteRotationStyle}
@@ -276,6 +282,7 @@ class TargetPane extends React.Component {
 const {
     onSelectSprite, // eslint-disable-line no-unused-vars
     onActivateBlocksTab, // eslint-disable-line no-unused-vars
+    onActivateCostumesTab, // eslint-disable-line no-unused-vars
     ...targetPaneProps
 } = TargetPaneComponent.propTypes;
 

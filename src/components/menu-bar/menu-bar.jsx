@@ -73,7 +73,11 @@ import {
 } from '../../reducers/menus';
 import {setStageSize} from '../../reducers/stage-size';
 import {setUploadMode, setRealtimeMode} from '../../reducers/program-mode';
-import {setRealtimeConnection, clearConnectionModalPeripheralName} from '../../reducers/connection-modal';
+import {setRealtimeConnection, clearConnectionModalPeripheralName, setConnectionModalPeripheralName}
+    from '../../reducers/connection-modal';
+import ConnectionMenu from '../connection-menu/connection-menu.jsx';
+import {onOpenConnectionMenuRequest} from '../../lib/connection-menu-events';
+import {saveProjectToComputer, watchProjectLoads} from '../../lib/local-project-file';
 import {setUpdate} from '../../reducers/update';
 import {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 
@@ -274,6 +278,7 @@ class MenuBar extends React.Component {
             'getSaveToComputerHandler',
             'restoreOptionMessage',
             'handleConnectionMouseUp',
+            'handleConnectionMenuClose',
             'handleUploadFirmware',
             'handleWindowsResize',
             'handleSelectDeviceMouseUp',
@@ -287,10 +292,14 @@ class MenuBar extends React.Component {
         ]);
         this.state = {
             isOverflow: false,
-            moreMenuOpen: false
+            moreMenuOpen: false,
+            connectionMenuOpen: false
         };
     }
-    handleMoreClick () {
+    handleMoreClick (e) {
+        // Venago: the menu items live inside this button. Ignore the mouse-up of a click on
+        // an item, otherwise the menu closes before the item's click runs.
+        if (e && e.target && e.target.closest && e.target.closest(`.${styles.menuBarMenu}`)) return;
         this.setState({moreMenuOpen: !this.state.moreMenuOpen});
     }
     handleMoreClose () {
@@ -298,6 +307,8 @@ class MenuBar extends React.Component {
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
+        watchProjectLoads(this.props.vm);
+        this.unsubscribeConnectionMenu = onOpenConnectionMenuRequest(() => this.setState({connectionMenuOpen: true}));
         this.props.vm.on('PERIPHERAL_DISCONNECTED', this.props.onDisconnect);
         this.props.vm.on('PROGRAM_MODE_UPDATE', this.handleProgramModeUpdate);
         window.addEventListener('resize', this.handleWindowsResize);
@@ -310,6 +321,7 @@ class MenuBar extends React.Component {
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
+        if (this.unsubscribeConnectionMenu) this.unsubscribeConnectionMenu();
         this.props.vm.removeListener('PERIPHERAL_DISCONNECTED', this.props.onDisconnect);
         this.props.vm.removeListener('PROGRAM_MODE_UPDATE', this.handleProgramModeUpdate);
         window.removeEventListener('resize', this.handleWindowsResize);
@@ -353,12 +365,32 @@ class MenuBar extends React.Component {
         this.props.onRequestCloseFile();
     }
     handleClickSave () {
-        this.props.onClickSave();
         this.props.onRequestCloseFile();
+        if (this.props.canSave) {
+            this.props.onClickSave();
+            return;
+        }
+        // Venago: no project server here, so save to a file on this computer.
+        this.saveToComputer(false);
     }
     handleClickSaveAsCopy () {
-        this.props.onClickSaveAsCopy();
         this.props.onRequestCloseFile();
+        if (this.props.canCreateCopy) {
+            this.props.onClickSaveAsCopy();
+            return;
+        }
+        this.saveToComputer(true);
+    }
+    saveToComputer (asCopy) {
+        const title = (this.props.projectTitle || 'Venago Project').replace(/[\\/:*?"<>|]/g, '_');
+        saveProjectToComputer({vm: this.props.vm, filename: `${title.substring(0, 100)}.ob`, asCopy})
+            .then(savedName => {
+                if (savedName) this.props.onShowSaveSuccess();
+            })
+            .catch(error => {
+                console.error(error); // eslint-disable-line no-console
+                this.props.onShowSavingError();
+            });
     }
     handleClickSeeCommunity (waitForUpdate) {
         if (this.props.shouldSaveBeforeTransition()) {
@@ -390,7 +422,7 @@ class MenuBar extends React.Component {
     handleKeyPress (event) {
         const modifier = bowser.mac ? event.metaKey : event.ctrlKey;
         if (modifier && event.key === 's') {
-            this.props.onClickSave();
+            this.handleClickSave();
             event.preventDefault();
         }
     }
@@ -413,7 +445,8 @@ class MenuBar extends React.Component {
         window.open('https://community.venagoinnovations.com');
     }
     handleClickOpenWiki () {
-        window.open('https://wiki.venagoinnovations.com');
+        // Venago: wiki.venagoinnovations.com does not exist (the domain does not resolve).
+        window.open('https://venagoinnovations.com', '_blank');
     }
     restoreOptionMessage (deletedItem) {
         switch (deletedItem) {
@@ -445,11 +478,12 @@ class MenuBar extends React.Component {
         }
     }
     handleConnectionMouseUp () {
-        if (this.props.deviceId) {
-            this.props.onOpenConnectionModal();
-        } else {
-            this.props.onDeviceIsEmpty();
-        }
+        // Venago: PictoBlox-style dropdown (Serial / Bluetooth port lists, or a
+        // "select a board" message) instead of the connection window.
+        this.setState(state => ({connectionMenuOpen: !state.connectionMenuOpen}));
+    }
+    handleConnectionMenuClose () {
+        this.setState({connectionMenuOpen: false});
     }
     handleSelectDeviceMouseUp () {
         const blocklyBlockCanvas = document.querySelector('.blocklyWorkspace .blocklyBlockCanvas');
@@ -631,21 +665,6 @@ class MenuBar extends React.Component {
                             style={{cursor: 'default'}}
                         >Venago</span>
                     </div>
-                    {(this.props.canChangeLanguage) && (<div
-                        className={classNames(styles.menuBarItem, styles.hoverable, styles.languageMenu)}
-                    >
-                        <div>
-                            <img
-                                className={styles.languageIcon}
-                                src={languageIcon}
-                            />
-                            <img
-                                className={styles.languageCaret}
-                                src={dropdownCaret}
-                            />
-                        </div>
-                        <LanguageSelector label={this.props.intl.formatMessage(ariaMessages.language)} />
-                    </div>)}
                     {(this.props.canManageFiles) && (
                         <div
                             className={classNames(styles.menuBarItem, styles.hoverable, {
@@ -795,8 +814,12 @@ class MenuBar extends React.Component {
                             )}
                     </div>
                     <Divider className={classNames(styles.divider)} />
+                    <div style={{position: 'relative', display: 'flex', alignSelf: 'stretch'}}>
                     <div
-                        className={classNames(styles.menuBarItem, styles.hoverable)}
+                        className={classNames(styles.menuBarItem, styles.hoverable, {
+                            [styles.active]: this.state.connectionMenuOpen
+                        })}
+                        data-venago-connection-toggle
                         style={{gap: '0.45rem'}}
                         onMouseUp={this.handleConnectionMouseUp}
                     >
@@ -815,6 +838,20 @@ class MenuBar extends React.Component {
                                 />}
                             </React.Fragment>
                         )}
+                    </div>
+                    <ConnectionMenu
+                        baudrate={this.props.baudrate}
+                        deviceData={this.props.deviceData}
+                        deviceId={this.props.deviceId}
+                        deviceName={this.props.deviceName}
+                        isRealtimeMode={this.props.isRealtimeMode}
+                        open={this.state.connectionMenuOpen}
+                        peripheralName={this.props.peripheralName}
+                        vm={this.props.vm}
+                        onConnected={this.props.onPeripheralConnected}
+                        onRequestClose={this.handleConnectionMenuClose}
+                        onSelectDevice={this.handleSelectDeviceMouseUp}
+                    />
                     </div>
                     {/* <div
                         className={classNames(styles.menuBarItem)}
@@ -907,9 +944,9 @@ class MenuBar extends React.Component {
                     </div>
                     <Divider className={classNames(styles.divider)} />
                     <div
-                        className={classNames(styles.menuBarItem, this.props.isRealtimeMode &&
+                        className={classNames(styles.menuBarItem, this.props.isRealtimeMode && this.props.isRealtimeSupported &&
                             this.props.peripheralName ? styles.hoverable : styles.disabled)}
-                        onMouseUp={this.props.isRealtimeMode && this.props.peripheralName ?
+                        onMouseUp={this.props.isRealtimeMode && this.props.isRealtimeSupported && this.props.peripheralName ?
                             this.handleUploadFirmware : null}
                     >
                         <img
@@ -925,6 +962,23 @@ class MenuBar extends React.Component {
                         />}
                     </div>
                     <Divider className={classNames(styles.divider)} />
+                    {/* Venago: PictoBlox-style language menu (globe), left of Program Mode. */}
+                    {(this.props.canChangeLanguage) && (<div
+                        className={classNames(styles.menuBarItem, styles.hoverable, styles.languageMenu)}
+                        title={this.props.intl.formatMessage(ariaMessages.language)}
+                    >
+                        <div>
+                            <img
+                                className={styles.languageIcon}
+                                src={languageIcon}
+                            />
+                            <img
+                                className={styles.languageCaret}
+                                src={dropdownCaret}
+                            />
+                        </div>
+                        <LanguageSelector label={this.props.intl.formatMessage(ariaMessages.language)} />
+                    </div>)}
                     <div className={classNames(styles.menuBarItem, styles.programModeGroup)}>
                         <FormattedMessage
                             defaultMessage="Program Mode"
@@ -965,6 +1019,18 @@ class MenuBar extends React.Component {
                                         defaultMessage="New Project"
                                         description="More menu - new project"
                                         id="gui.venago.moreMenu.new"
+                                    />
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        this.handleMoreClose();
+                                        if (this.props.onStartSelectingFileUpload) this.props.onStartSelectingFileUpload();
+                                    }}
+                                >
+                                    <FormattedMessage
+                                        defaultMessage="Load from your computer"
+                                        description="More menu - load project from a file"
+                                        id="gui.venago.moreMenu.loadFromComputer"
                                     />
                                 </MenuItem>
                                 <MenuItem onClick={() => { this.handleMoreClose(); this.handleClickSave(); }}>
@@ -1017,10 +1083,10 @@ class MenuBar extends React.Component {
                                     />
                                 </MenuItem>
                                 <MenuItem
-                                    className={classNames({[styles.disabled]: !(this.props.isRealtimeMode && this.props.peripheralName)})}
+                                    className={classNames({[styles.disabled]: !(this.props.isRealtimeMode && this.props.isRealtimeSupported && this.props.peripheralName)})}
                                     onClick={() => {
                                         this.handleMoreClose();
-                                        if (this.props.isRealtimeMode && this.props.peripheralName) {
+                                        if (this.props.isRealtimeMode && this.props.isRealtimeSupported && this.props.peripheralName) {
                                             this.handleUploadFirmware();
                                         }
                                     }}
@@ -1111,6 +1177,10 @@ MenuBar.propTypes = {
     intl: intlShape,
     isUpdating: PropTypes.bool,
     isRealtimeMode: PropTypes.bool.isRequired,
+    isRealtimeSupported: PropTypes.bool,
+    baudrate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    deviceData: PropTypes.instanceOf(Array),
+    onPeripheralConnected: PropTypes.func,
     isRtl: PropTypes.bool,
     isShared: PropTypes.bool,
     isShowingProject: PropTypes.bool,
@@ -1141,6 +1211,8 @@ MenuBar.propTypes = {
     onClickRemix: PropTypes.func,
     onClickSave: PropTypes.func,
     onClickSaveAsCopy: PropTypes.func,
+    onShowSaveSuccess: PropTypes.func,
+    onShowSavingError: PropTypes.func,
     onClickCheckUpdate: PropTypes.func,
     onClickClearCache: PropTypes.func,
     onClickInstallDriver: PropTypes.func,
@@ -1205,6 +1277,12 @@ const mapStateToProps = (state, ownProps) => {
         editMenuOpen: editMenuOpen(state),
         isUpdating: getIsUpdating(loadingState),
         isRealtimeMode: state.scratchGui.programMode.isRealtimeMode,
+        // Venago: only boards with realtime (Firmata) firmware can upload it.
+        isRealtimeSupported: (() => {
+            const deviceId = state.scratchGui.device.deviceId;
+            const dev = (state.scratchGui.deviceData.deviceData || []).find(item => item.deviceId === deviceId);
+            return !!(dev && dev.programMode && dev.programMode.includes('realtime'));
+        })(),
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         isSupportSwitchMode: state.scratchGui.programMode.isSupportSwitchMode,
@@ -1222,7 +1300,9 @@ const mapStateToProps = (state, ownProps) => {
         vm: state.scratchGui.vm,
         peripheralName: state.scratchGui.connectionModal.peripheralName,
         deviceId: state.scratchGui.device.deviceId,
-        deviceName: state.scratchGui.device.deviceName
+        deviceName: state.scratchGui.device.deviceName,
+        baudrate: state.scratchGui.hardwareConsole.baudrate,
+        deviceData: state.scratchGui.deviceData.deviceData
     };
 };
 
@@ -1246,6 +1326,8 @@ const mapDispatchToProps = dispatch => ({
     onClickNew: needSave => dispatch(requestNewProject(needSave)),
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
+    onShowSaveSuccess: () => showAlertWithTimeout(dispatch, 'localSaveSuccess'),
+    onShowSavingError: () => showAlertWithTimeout(dispatch, 'localSaveError'),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
     onSetUploadMode: () => {
@@ -1256,6 +1338,7 @@ const mapDispatchToProps = dispatch => ({
     onSetRealtimeMode: () => dispatch(setRealtimeMode()),
     onSetStageLarge: () => dispatch(setStageSize(STAGE_SIZE_MODES.large)),
     onOpenConnectionModal: () => dispatch(openConnectionModal()),
+    onPeripheralConnected: peripheralName => dispatch(setConnectionModalPeripheralName(peripheralName)),
     onOpenUploadProgress: () => dispatch(openUploadProgress()),
     onDisconnect: () => {
         dispatch(clearConnectionModalPeripheralName());

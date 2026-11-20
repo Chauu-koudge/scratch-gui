@@ -8,6 +8,7 @@ import VM from 'openblock-vm';
 import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
 import Controls from '../../containers/controls.jsx';
+import StageMediaControls from '../stage-media-controls/stage-media-controls.jsx';
 import {getStageDimensions} from '../../lib/screen-utils';
 import {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 
@@ -103,6 +104,8 @@ const StageHeaderComponent = function (props) {
                     style={{width: stageDimensions.width}}
                 >
                     <Controls vm={vm} />
+                    {/* Venago: record video / screenshot / microphone, like PictoBlox's full screen. */}
+                    {showBranding ? null : <StageMediaControls vm={vm} />}
                     {stageButton}
                 </Box>
             </Box>

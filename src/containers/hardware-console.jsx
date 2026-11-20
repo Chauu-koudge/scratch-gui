@@ -62,6 +62,16 @@ const eolList = [
 ];
 
 const MAX_CONSOLE_LENGTH = 32768;
+// eslint-disable-next-line no-control-regex
+const ANSI_ESCAPE_SEQUENCE = /\x1B\[[0-?]*[ -/]*[@-~]/g;
+
+const getTimestamp = () => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+};
 
 // eslint-disable-next-line react/prefer-stateless-function
 class HardwareConsole extends React.Component {
@@ -78,6 +88,13 @@ class HardwareConsole extends React.Component {
             'handleKeyDown',
             'handleSelectBaudrate',
             'handleSelectEol',
+            'handleCompileError',
+            'handleCompileStart',
+            'handleCompileSuccess',
+            'handleUploadError',
+            'handleUploadStart',
+            'handleUploadStdout',
+            'handleUploadSuccess',
             'onReciveData',
             'writeToPeripheral'
         ]);
@@ -86,10 +103,23 @@ class HardwareConsole extends React.Component {
             dataToSend: ''
         };
         this._recivceBuffer = new Uint8Array(0);
+        this._serialLineBuffer = '';
+        this._uploadOutput = '';
+        this._uploadPort = null;
+        this._uploadInProgress = false;
+        this._compileSucceeded = false;
+        this._uploadStarted = false;
     }
 
     componentDidMount () {
         this.props.vm.addListener('PERIPHERAL_RECIVE_DATA', this.onReciveData);
+        this.props.vm.addListener('PERIPHERAL_UPLOAD_STARTED', this.handleUploadStart);
+        this.props.vm.addListener('PERIPHERAL_UPLOAD_STDOUT', this.handleUploadStdout);
+        this.props.vm.addListener('PERIPHERAL_COMPILE_START', this.handleCompileStart);
+        this.props.vm.addListener('PERIPHERAL_COMPILE_SUCCESS', this.handleCompileSuccess);
+        this.props.vm.addListener('PERIPHERAL_COMPILE_ERROR', this.handleCompileError);
+        this.props.vm.addListener('PERIPHERAL_UPLOAD_SUCCESS', this.handleUploadSuccess);
+        this.props.vm.addListener('PERIPHERAL_UPLOAD_ERROR', this.handleUploadError);
         if (this.props.peripheralName) {
             this.props.vm.setPeripheralBaudrate(this.props.deviceId, parseInt(this.props.baudrate, 10));
         }
@@ -97,6 +127,13 @@ class HardwareConsole extends React.Component {
 
     componentWillUnmount () {
         this.props.vm.removeListener('PERIPHERAL_RECIVE_DATA', this.onReciveData);
+        this.props.vm.removeListener('PERIPHERAL_UPLOAD_STARTED', this.handleUploadStart);
+        this.props.vm.removeListener('PERIPHERAL_UPLOAD_STDOUT', this.handleUploadStdout);
+        this.props.vm.removeListener('PERIPHERAL_COMPILE_START', this.handleCompileStart);
+        this.props.vm.removeListener('PERIPHERAL_COMPILE_SUCCESS', this.handleCompileSuccess);
+        this.props.vm.removeListener('PERIPHERAL_COMPILE_ERROR', this.handleCompileError);
+        this.props.vm.removeListener('PERIPHERAL_UPLOAD_SUCCESS', this.handleUploadSuccess);
+        this.props.vm.removeListener('PERIPHERAL_UPLOAD_ERROR', this.handleUploadError);
     }
 
     appendBuffer (arr1, arr2) {
@@ -107,12 +144,32 @@ class HardwareConsole extends React.Component {
     }
 
     onReciveData (data) {
-        if (this.props.isPause) {
+        if (this.props.isHexForm) {
+            this.appendConsoleData(data, false);
             return;
         }
 
-        // limit data length to MAX_CONSOLE_LENGTH
-        if (this._recivceBuffer.byteLength + data.byteLength >= MAX_CONSOLE_LENGTH) {
+        const text = new TextDecoder('utf-8').decode(data);
+        const lines = `${this._serialLineBuffer}${text}`.split(/\r?\n/);
+        this._serialLineBuffer = lines.pop();
+        lines.forEach(line => {
+            if (line) {
+                this.appendTimestampedMessage(line, false);
+            } else {
+                this.appendConsoleData(new TextEncoder().encode('\r\n'), false);
+            }
+        });
+    }
+
+    appendConsoleData (data, ignorePause) {
+        if (this.props.isPause && !ignorePause) {
+            return;
+        }
+
+        if (data.byteLength >= MAX_CONSOLE_LENGTH) {
+            data = data.slice(data.byteLength - MAX_CONSOLE_LENGTH);
+            this._recivceBuffer = new Uint8Array(0);
+        } else if (this._recivceBuffer.byteLength + data.byteLength > MAX_CONSOLE_LENGTH) {
             this._recivceBuffer = this._recivceBuffer.slice(
                 this._recivceBuffer.byteLength + data.byteLength - MAX_CONSOLE_LENGTH);
         }
@@ -130,8 +187,119 @@ class HardwareConsole extends React.Component {
         }
     }
 
+    handleUploadStdout (data) {
+        const output = data.message.replace(ANSI_ESCAPE_SEQUENCE, '');
+        if (this._uploadInProgress) {
+            const uploadOutput = `${this._uploadOutput}${output}`;
+            this._uploadOutput = uploadOutput.slice(-8192);
+
+            if (!this._compileSucceeded &&
+                (/Compilation succeeded\.?/i.test(uploadOutput) ||
+                    /Sketch uses\s+\d+ bytes/i.test(uploadOutput))) {
+                this._compileSucceeded = true;
+                this.appendTimestampedMessage('Compilation successful.');
+            }
+
+            const portMatch = uploadOutput.match(/\b(COM\d+)\b/i);
+            if (portMatch) {
+                this._uploadPort = portMatch[1].toUpperCase();
+            }
+            if (this._compileSucceeded && !this._uploadStarted &&
+                (/avrdude/i.test(uploadOutput) ||
+                    (portMatch && /flash program starting/i.test(uploadOutput)))) {
+                const device = this.props.deviceData.find(item => item.deviceId === this.props.deviceId);
+                const deviceName = device ? device.name : 'Arduino';
+                const port = this._uploadPort && !deviceName.includes(this._uploadPort) ?
+                    ` (${this._uploadPort})` : '';
+                this._uploadStarted = true;
+                this.appendTimestampedMessage(`Uploading program to ${deviceName}${port}...`);
+            }
+            return;
+        }
+        this.appendConsoleData(new TextEncoder().encode(output), true);
+    }
+
+    appendConsoleMessage (message) {
+        this.appendConsoleData(new TextEncoder().encode(message), true);
+        if (this._updateTimeoutID) {
+            clearTimeout(this._updateTimeoutID);
+            this._updateTimeoutID = null;
+        }
+        this.setState({
+            consoleArray: this._recivceBuffer
+        });
+    }
+
+    appendTimestampedMessage (message, ignorePause = true) {
+        const output = `[${getTimestamp()}] ${message}\r\n`;
+        if (ignorePause) {
+            this.appendConsoleMessage(output);
+        } else {
+            this.appendConsoleData(new TextEncoder().encode(output), false);
+        }
+    }
+
+    handleUploadStart (data) {
+        this.handleClickClean();
+        this._uploadInProgress = true;
+        this._uploadOutput = '';
+        this._uploadPort = null;
+        this._compileSucceeded = false;
+        this._uploadStarted = false;
+        if (data && data.baudrate) {
+            this.props.vm.setPeripheralBaudrate(this.props.deviceId, data.baudrate);
+            this.props.onSetBaudrate(String(data.baudrate));
+        }
+        this.appendTimestampedMessage('Compilation started...');
+    }
+
+    handleCompileStart () {
+        this.handleClickClean();
+        this._uploadInProgress = false;
+        this.appendTimestampedMessage('Compilation started...');
+    }
+
+    handleCompileSuccess () {
+        this.appendTimestampedMessage('Compilation successful.');
+    }
+
+    handleCompileError (data) {
+        this.appendTimestampedMessage('Compilation failed.');
+        this.appendConsoleMessage(`${data.message}\r\n`);
+    }
+
+    handleUploadSuccess (aborted) {
+        if (!aborted) {
+            if (!this._compileSucceeded) {
+                this._compileSucceeded = true;
+                this.appendTimestampedMessage('Compilation successful.');
+            }
+            if (!this._uploadStarted) {
+                const portMatch = this._uploadOutput.match(/\b(COM\d+)\b/i);
+                if (portMatch) {
+                    this._uploadPort = portMatch[1].toUpperCase();
+                }
+                const device = this.props.deviceData.find(item => item.deviceId === this.props.deviceId);
+                const deviceName = device ? device.name : 'Arduino';
+                const port = this._uploadPort && !deviceName.includes(this._uploadPort) ?
+                    ` (${this._uploadPort})` : '';
+                this._uploadStarted = true;
+                this.appendTimestampedMessage(`Uploading program to ${deviceName}${port}...`);
+            }
+            this.appendTimestampedMessage('Upload successful.');
+        }
+        this._uploadInProgress = false;
+    }
+
+    handleUploadError (data) {
+        this._uploadInProgress = false;
+        this.appendTimestampedMessage('Upload failed.');
+        this.appendConsoleMessage(`${data.message}\r\n`);
+    }
+
     handleClickClean () {
         this._recivceBuffer = new Uint8Array(0);
+        this._serialLineBuffer = '';
         this.setState({
             consoleArray: new Uint8Array(0)
         });
@@ -263,6 +431,7 @@ class HardwareConsole extends React.Component {
 
 HardwareConsole.propTypes = {
     baudrate: PropTypes.string.isRequired,
+    deviceData: PropTypes.instanceOf(Array).isRequired,
     deviceId: PropTypes.string.isRequired,
     eol: PropTypes.string.isRequired,
     handleClickSerialportMenu: PropTypes.func.isRequired,
@@ -284,6 +453,7 @@ HardwareConsole.propTypes = {
 
 const mapStateToProps = state => ({
     baudrate: state.scratchGui.hardwareConsole.baudrate,
+    deviceData: state.scratchGui.deviceData.deviceData,
     deviceId: state.scratchGui.device.deviceId,
     eol: state.scratchGui.hardwareConsole.eol,
     isAutoScroll: state.scratchGui.hardwareConsole.isAutoScroll,

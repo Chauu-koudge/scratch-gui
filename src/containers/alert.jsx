@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import SB3Downloader from './sb3-downloader.jsx';
 import AlertComponent from '../components/alerts/alert.jsx';
 import {openConnectionModal, openUploadProgress} from '../reducers/modals';
+import {requestOpenConnectionMenu} from '../lib/connection-menu-events';
 import {showAlertWithTimeout} from '../reducers/alerts';
 import {manualUpdateProject} from '../reducers/project-state';
 
@@ -31,7 +32,8 @@ class Alert extends React.Component {
         this.handleOnCloseAlert();
     }
     handleOnReconnect () {
-        this.props.onOpenConnectionModal();
+        // Venago: reconnect through the menu bar's Serial / Bluetooth dropdown.
+        requestOpenConnectionMenu();
         this.handleOnCloseAlert();
     }
     render () {

@@ -1,3 +1,4 @@
+
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,7 +17,6 @@ const messages = defineMessages({
     }
 });
 
-
 class BackdropLibrary extends React.Component {
     constructor (props) {
         super(props);
@@ -24,6 +24,7 @@ class BackdropLibrary extends React.Component {
             'handleItemSelect'
         ]);
     }
+
     handleItemSelect (item) {
         const vmBackdrop = {
             name: item.name,
@@ -32,9 +33,16 @@ class BackdropLibrary extends React.Component {
             bitmapResolution: item.bitmapResolution,
             skinId: null
         };
-        // Do not switch to stage, just add the backdrop
-        this.props.vm.addBackdrop(item.md5ext, vmBackdrop);
+
+        const stage = this.props.vm.runtime.getTargetForStage();
+
+        this.props.vm.setEditingTarget(stage.id);
+
+        // Add the selected backdrop to the Stage.
+        // Do not automatically open the Backdrops editor.
+        return this.props.vm.addBackdrop(item.md5ext, vmBackdrop);
     }
+
     render () {
         return (
             <LibraryComponent

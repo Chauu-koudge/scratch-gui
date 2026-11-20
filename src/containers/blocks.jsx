@@ -21,6 +21,13 @@ import DropAreaHOC from '../lib/drop-area-hoc.jsx';
 import DragConstants from '../lib/drag-constants';
 import defineDynamicBlock from '../lib/define-dynamic-block';
 import {getGeneratorNameFromDeviceType} from '../lib/code-generator';
+import registerSensorGenerators from '../lib/sensor-generators';
+import registerBoardExtraGenerators from '../lib/board-extra-generators';
+import setBoardBeginName from '../lib/board-begin-blocks';
+import generateProgramCode from '../lib/program-workspace';
+import {setUndoWorkspace} from '../lib/workspace-undo';
+import {registerBlocksLocales} from '../lib/venago-locales';
+import {requestOpenConnectionMenu} from '../lib/connection-menu-events';
 
 import {connect} from 'react-redux';
 import {updateToolbox, setIsUpdating} from '../reducers/toolbox';
@@ -55,7 +62,8 @@ const DroppableBlocks = DropAreaHOC([
 class Blocks extends React.Component {
     constructor (props) {
         super(props);
-        this.ScratchBlocks = VMScratchBlocks(props.vm);
+        this.ScratchBlocks = registerBlocksLocales(
+            registerBoardExtraGenerators(registerSensorGenerators(VMScratchBlocks(props.vm))));
         bindAll(this, [
             'attachVM',
             'detachVM',
@@ -115,6 +123,8 @@ class Blocks extends React.Component {
             {rtl: this.props.isRtl, toolbox: this.props.toolboxXML}
         );
         this.workspace = this.ScratchBlocks.inject(this.blocks, workspaceConfig);
+        // Venago: Undo / Redo buttons beside the green flag and the Upload button.
+        setUndoWorkspace(this.workspace);
 
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.
@@ -230,6 +240,7 @@ class Blocks extends React.Component {
     }
     componentWillUnmount () {
         this.detachVM();
+        setUndoWorkspace(null);
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
         clearTimeout(this.getXMLAndUpdateToolboxTimeout);
@@ -482,32 +493,29 @@ class Blocks extends React.Component {
             const dev = this.props.deviceData.find(ext => ext.deviceId === deviceId);
             this.props.onDeviceSelected(dev.deviceId, dev.name, dev.type);
             this.ScratchBlocks.Device.setDevice(dev.deviceId, dev.type);
+            // Venago: "when Arduino begin" -> "when <board name> begin".
+            setBoardBeginName(this.ScratchBlocks, dev.name, this.workspace);
             if (dev.defaultBaudRate) {
                 this.props.onSetBaudrate(dev.defaultBaudRate);
             }
 
             const supportUploadMode = dev.programMode.includes('upload');
-            const supportRealtimeMode = dev.programMode.includes('realtime');
 
-            // eslint-disable-next-line no-negated-condition
-            if (supportUploadMode && supportRealtimeMode) {
+            // Venago: every board can switch between Stage (realtime) and programming (upload)
+            // mode, like the Arduino Uno / Nano / Mega. The mode is not forced when a board is
+            // loaded: selecting a board from the library starts it in Stage mode (see
+            // device-library.jsx), and opening a project keeps the mode saved in the project.
+            // Boards without realtime firmware show their hardware blocks with an
+            // "These blocks work in Upload mode" hint while in Stage mode.
+            if (supportUploadMode) {
                 this.props.onSetSupportSwitchMode(true);
 
                 const defaultProgramMode = dev.defaultProgramMode;
                 if (dev.programMode.includes(defaultProgramMode)) {
-                    if (defaultProgramMode === 'upload') {
-                        this.props.vm.runtime.setRealtimeMode(false);
-                    } else {
-                        this.props.vm.runtime.setRealtimeMode(true);
-                    }
+                    this.props.vm.runtime.setRealtimeMode(defaultProgramMode !== 'upload');
                 }
-
             } else {
-                if (supportUploadMode) {
-                    this.props.vm.runtime.setRealtimeMode(false);
-                } else {
-                    this.props.vm.runtime.setRealtimeMode(true);
-                }
+                this.props.vm.runtime.setRealtimeMode(true);
                 this.props.onSetSupportSwitchMode(false);
             }
 
@@ -639,7 +647,8 @@ class Blocks extends React.Component {
         this.setState(p);
     }
     handleConnectionModalStart () {
-        this.props.onOpenConnectionModal();
+        // Venago: the menu bar's Serial / Bluetooth dropdown replaces the connection window.
+        requestOpenConnectionMenu();
     }
     handleStatusButtonUpdate () {
         this.ScratchBlocks.refreshStatusButtons(this.workspace);
@@ -648,7 +657,11 @@ class Blocks extends React.Component {
         let code;
         try {
             const generatorName = getGeneratorNameFromDeviceType(this.props.deviceType);
-            code = this.ScratchBlocks[generatorName].workspaceToCode(this.workspace);
+            // Device extensions can swap the ScratchBlocks object, so (re)register lazily.
+            registerSensorGenerators(this.ScratchBlocks);
+            registerBoardExtraGenerators(this.ScratchBlocks);
+            // Venago: include loose stacks and Stage-mode stacks, not only the begin hat's stack.
+            code = generateProgramCode(this.ScratchBlocks, generatorName, this.workspace, this.props.deviceType);
         } catch (e) {
             code = e.message;
         }

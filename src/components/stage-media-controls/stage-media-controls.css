@@ -1,0 +1,76 @@
+@import "../../css/colors.css";
+
+.media-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-left: auto;
+    margin-right: 0.5rem;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.375rem;
+    border: 1px solid $ui-black-transparent;
+    border-radius: 0.25rem;
+    background: $ui-white;
+    color: $text-primary;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+
+.button:hover {
+    background: $motion-light-transparent;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.recording {
+    border-color: #e5534b;
+    background: hsla(4, 75%, 60%, 0.12);
+}
+
+.recording svg {
+    animation: venago-pulse 1s ease-in-out infinite;
+}
+
+@keyframes venago-pulse {
+    50% { opacity: 0.35; }
+}
+
+.timer {
+    color: #e5534b;
+    font-variant-numeric: tabular-nums;
+}
+
+.mic-on {
+    border-color: #2ea043;
+    background: hsla(135, 55%, 40%, 0.12);
+}
+
+.flash {
+    background: #fff7c2;
+}
+
+.message {
+    position: absolute;
+    top: calc(100% + 0.375rem);
+    right: 0;
+    z-index: 10;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.375rem;
+    background: hsla(225, 15%, 25%, 0.92);
+    color: $ui-white;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}

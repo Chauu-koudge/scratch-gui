@@ -8,6 +8,8 @@ import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import analytics from '../lib/analytics';
 import {setDeviceData} from '../reducers/device-data';
+import {setStageSize} from '../reducers/stage-size';
+import {STAGE_SIZE_MODES} from '../lib/layout-constants';
 
 import {makeDeviceLibrary} from '../lib/libraries/devices/index.jsx';
 
@@ -72,6 +74,16 @@ class DeviceLibrary extends React.PureComponent {
             if (this.props.vm.extensionManager.isDeviceLoaded(id)) {
                 this.props.onDeviceSelected(id);
             } else {
+                // Venago: every board starts in Stage (realtime) mode after it is selected.
+                // It only switches to programming (upload) mode when the user turns on the
+                // "Program Mode" switch, the same as the Arduino Uno / Nano / Mega.
+                if (!this.props.vm.runtime.isRealtimeMode()) {
+                    // The realtime stage doesn't support the hidden stage size.
+                    if (this.props.stageSizeMode === STAGE_SIZE_MODES.hide) {
+                        this.props.onSetStageLarge();
+                    }
+                    this.props.vm.runtime.setRealtimeMode(true);
+                }
                 this.props.vm.extensionManager.loadDeviceURL(device).then(() => {
                     this.props.vm.extensionManager.getDeviceExtensionsList().then(() => {
                         // TODO: Add a event for install device extension
@@ -124,15 +136,19 @@ DeviceLibrary.propTypes = {
     onDeviceSelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     onSetDeviceData: PropTypes.func.isRequired,
+    onSetStageLarge: PropTypes.func,
+    stageSizeMode: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
 };
 
 const mapStateToProps = state => ({
-    deviceData: state.scratchGui.deviceData.deviceData
+    deviceData: state.scratchGui.deviceData.deviceData,
+    stageSizeMode: state.scratchGui.stageSize.stageSize
 });
 
 const mapDispatchToProps = dispatch => ({
-    onSetDeviceData: data => dispatch(setDeviceData(data))
+    onSetDeviceData: data => dispatch(setDeviceData(data)),
+    onSetStageLarge: () => dispatch(setStageSize(STAGE_SIZE_MODES.large))
 });
 
 export default compose(

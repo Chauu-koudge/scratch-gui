@@ -338,16 +338,14 @@
 
 
 /* === Venago navbar — minimal mode (logo left, 4 essentials right) === */
-/* Hide File, Edit, Language, Wiki, Tutorials, Camera, Firmware, Community */
+/* Hide File, Edit, Wiki, Tutorials, Camera, Firmware, Community (the language globe stays visible) */
 .menu-bar-item:has(.file-icon),
 .menu-bar-item:has(.edit-icon),
-.menu-bar-item:has(.language-icon),
 .menu-bar-item:has(.wiki-icon),
 .menu-bar-item:has(.help-icon),
 .menu-bar-item:has(.screen-shot-logo),
 .menu-bar-item:has(.upload-firmware-logo),
 .menu-bar-item:has(.community-icon),
-.language-menu,
 .menu-bar .divider {
     display: none !important;
 }
@@ -526,3 +524,12 @@
     border-radius: 8px !important;
     cursor: pointer !important;
 }
+
+/* Venago: language globe (left of Program Mode), PictoBlox style. */
+.menu-bar-item.language-menu {
+    display: inline-flex !important;
+    align-items: center;
+    width: auto;
+    padding: 0 0.75rem !important;
+}
+

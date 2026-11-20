@@ -55,7 +55,8 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
-        if (this.props.isRealtimeMode !== true) {
+        if (this.props.isRealtimeMode !== prevProps.isRealtimeMode &&
+            this.props.isRealtimeMode !== true) {
             this.props.onActivateBlocksTab();
         }
     }

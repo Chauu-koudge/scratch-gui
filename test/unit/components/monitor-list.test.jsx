@@ -26,7 +26,7 @@ describe('MonitorListComponent', () => {
         widthDefault: 100,
         heightDefault: 100
     };
-
+wh
     let monitors = OrderedMap({});
 
     // Wrap this in a function so it gets test specific states and can be reused.

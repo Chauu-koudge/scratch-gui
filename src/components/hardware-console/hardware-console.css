@@ -12,11 +12,16 @@
     height: 260px;
     overflow:auto;
     word-break:break-all;
-	white-space: pre-wrap;
+    white-space: pre-wrap;
     user-select: text;
-    color: $text-primary;
+    color: #fff;
+    background-color: #000;
     font-family: "monospace", Helvetica, Arial, sans-serif;
     font-size: $menu-bar-standard-font-size;
+}
+
+.console-array * {
+    color: #fff !important;
 }
 
 .button:hover {
@@ -161,4 +166,3 @@
     box-shadow: 0 0 0 calc($space * .25) $ui-modal-overlay;
     color: $text-primary;
 }
-

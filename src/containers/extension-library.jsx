@@ -71,7 +71,8 @@ class ExtensionLibrary extends React.PureComponent {
         bindAll(this, [
             'updateScratchExtensions',
             'updateDeviceExtensions',
-            'handleItemSelect'
+            'handleItemSelect',
+            'finishAdding'
         ]);
         this.state = {
             scratchExtensions: [],
@@ -79,6 +80,10 @@ class ExtensionLibrary extends React.PureComponent {
         };
     }
 
+    componentWillUnmount () {
+        // The library closes right after an extension loads; ignore list updates after that.
+        this.unmounted = true;
+    }
     componentDidMount () {
         if (this.props.isRealtimeMode) {
             this.updateScratchExtensions();
@@ -90,7 +95,7 @@ class ExtensionLibrary extends React.PureComponent {
     updateScratchExtensions () {
         this.props.vm.extensionManager.getExtensionsList(Object.assign([], extensionLibraryContent))
             .then(data => {
-                if (data) {
+                if (data && !this.unmounted) {
                     this.setState({scratchExtensions: data});
                 }
             });
@@ -99,10 +104,30 @@ class ExtensionLibrary extends React.PureComponent {
     updateDeviceExtensions () {
         this.props.vm.extensionManager.getDeviceExtensionsList()
             .then(data => {
-                if (data) {
+                if (data && !this.unmounted) {
                     this.setState({deviceExtensions: data});
                 }
             });
+    }
+
+    /**
+     * Venago: like PictoBlox, return to the editor once an extension has finished loading,
+     * and scroll the block palette to the new extension's blocks.
+     * (Clicking an extension that is already added removes it and keeps the library open.)
+     * @param {string} categoryId - the new extension's category id.
+     */
+    finishAdding (categoryId) {
+        this.props.onRequestClose();
+        if (this.props.onCategorySelected && categoryId) {
+            // Wait for the toolbox to include the new category.
+            setTimeout(() => {
+                try {
+                    this.props.onCategorySelected(categoryId);
+                } catch (e) {
+                    // the category id may differ from the extension id; staying at the top is fine
+                }
+            }, 400);
+        }
     }
 
     handleItemSelect (item) {
@@ -121,6 +146,7 @@ class ExtensionLibrary extends React.PureComponent {
                 } else {
                     this.props.vm.extensionManager.loadExtensionURL(url).then(() => {
                         this.updateScratchExtensions();
+                        this.finishAdding(id);
                         analytics.event({
                             category: 'extensions',
                             action: 'select extension',
@@ -136,6 +162,7 @@ class ExtensionLibrary extends React.PureComponent {
             } else {
                 this.props.vm.extensionManager.loadDeviceExtension(id).then(() => {
                     this.updateDeviceExtensions();
+                    this.finishAdding(id);
                     analytics.event({
                         category: 'extensions',
                         action: 'select device extension',
@@ -197,6 +224,7 @@ ExtensionLibrary.propTypes = {
     deviceId: PropTypes.string,
     intl: intlShape.isRequired,
     isRealtimeMode: PropTypes.bool,
+    onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     visible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types

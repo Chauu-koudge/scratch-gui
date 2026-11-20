@@ -28,8 +28,9 @@ class SpriteLibrary extends React.PureComponent {
     handleItemSelect (item) {
         // Randomize position of library sprite
         randomizeSpritePosition(item);
-        this.props.vm.addSprite(JSON.stringify(item)).then(() => {
-            this.props.onActivateBlocksTab();
+        this.props.vm.addSprite(JSON.stringify(item)).then(targets => {
+            this.props.vm.setEditingTarget(targets[0].id);
+            this.props.onActivateCostumesTab();
         });
     }
     render () {
@@ -48,7 +49,7 @@ class SpriteLibrary extends React.PureComponent {
 
 SpriteLibrary.propTypes = {
     intl: intlShape.isRequired,
-    onActivateBlocksTab: PropTypes.func.isRequired,
+    onActivateCostumesTab: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired
 };

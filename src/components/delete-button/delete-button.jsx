@@ -17,9 +17,9 @@ const DeleteButton = props => (
         onClick={props.onClick}
     >
         <div className={styles.deleteButtonVisible}>
-            <img
+            <img 
                 className={styles.deleteIcon}
-                src={deleteIcon}
+                src={deleteIcon}  
             />
         </div>
     </div>

@@ -14,12 +14,19 @@ import largeStageIcon from './icon--large-stage.svg';
 import smallStageIcon from './icon--small-stage.svg';
 import hideStageIcon from './icon--hide-stage.svg';
 import uploadIcon from './icon--upload.svg';
+import compileIcon from './icon--compile.svg';
+import UndoRedo from '../../containers/undo-redo.jsx';
 
 const messages = defineMessages({
     uploadMessage: {
         defaultMessage: 'Upload',
         description: 'Button to upload program',
         id: 'gui.hardwareHeader.upload'
+    },
+    compileMessage: {
+        defaultMessage: 'Compile',
+        description: 'Button to compile the generated Arduino program',
+        id: 'gui.hardwareHeader.compile'
     },
     largeStageSizeMessage: {
         defaultMessage: 'Switch to large stage',
@@ -43,6 +50,7 @@ const HardwareHeaderComponent = props => {
         onSetStageLarge,
         onSetStageSmall,
         onSetStageHide,
+        onCompile,
         onUpload,
         stageSize
     } = props;
@@ -56,11 +64,31 @@ const HardwareHeaderComponent = props => {
             style={{width: stageDimensions.width + 2}}
         >
             <div className={styles.uploadGroup}>
+                <UndoRedo className={styles.undoRedo} />
+                {props.canCompile ? (
+                    <button
+                        aria-label={props.intl.formatMessage(messages.compileMessage)}
+                        className={styles.compileButton}
+                        disabled={props.compiling}
+                        onClick={onCompile}
+                        title={props.intl.formatMessage(messages.compileMessage)}
+                        type="button"
+                    >
+                        <img
+                            alt=""
+                            className={styles.compileIcon}
+                            draggable={false}
+                            src={compileIcon}
+                        />
+                    </button>
+                ) : null}
                 <div
                     className={classNames(
                         styles.uploadButton,
+                        props.compiling ? styles.uploadButtonDisabled : null
                     )}
-                    onClick={onUpload}
+                    onClick={props.compiling ? null : onUpload}
+                    aria-disabled={props.compiling}
                 >
                     <img
                         alt={props.intl.formatMessage(messages.uploadMessage)}
@@ -135,6 +163,9 @@ const HardwareHeaderComponent = props => {
 
 HardwareHeaderComponent.propTypes = {
     intl: intlShape,
+    canCompile: PropTypes.bool,
+    compiling: PropTypes.bool,
+    onCompile: PropTypes.func,
     onUpload: PropTypes.func.isRequired,
     onSetStageLarge: PropTypes.func.isRequired,
     onSetStageSmall: PropTypes.func.isRequired,

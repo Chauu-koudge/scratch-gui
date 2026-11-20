@@ -12,8 +12,7 @@ class Dial extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleMouseDown',
-            'handleMouseMove',
+            'handleMouseDown',  'handleMouseMove',
             'containerRef',
             'handleRef',
             'unbindMouseEvents'
@@ -23,7 +22,8 @@ class Dial extends React.Component {
     componentDidMount () {
         // Manually add touch/mouse handlers so that preventDefault can be used
         // to prevent scrolling on touch.
-        // Tracked as a react issue https://github.com/facebook/react/issues/6436
+        // Tracked as a react issue https://github.com/facebook/react/issues/6436  
+        
         this.handleElement.addEventListener('mousedown', this.handleMouseDown);
         this.handleElement.addEventListener('touchstart', this.handleMouseDown);
     }
@@ -55,6 +55,7 @@ class Dial extends React.Component {
      * @param {number} direction - Direction in degrees, clockwise, 90=horizontal.
      * @returns {string} Path data string for the gauge.
      */
+
     gaugePath (radius, direction) {
         const rads = (direction) * (Math.PI / 180);
         const path = [];

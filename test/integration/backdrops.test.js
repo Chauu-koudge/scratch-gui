@@ -25,25 +25,30 @@ describe('Working with backdrops', () => {
         await driver.quit();
     });
 
-    test('Adding a backdrop from the library should not switch to stage', async () => {
+    test('Adding a backdrop from the library should show it in the editor', async () => {
         await loadUri(uri);
 
         // Start on the sounds tab of sprite1 to test switching behavior
         await clickText('Sounds');
 
-        // Add a backdrop without selecting the stage first to test switching
+        // Add a backdrop without selecting the stage first
         await clickXpath('//button[@aria-label="Choose a Backdrop"]');
         const el = await findByXpath("//input[@placeholder='Search']");
         await el.sendKeys('blue');
         await clickText('Blue Sky'); // Adds the backdrop
 
-        // Make sure the sprite is still selected, and that the tab has not changed
-        await clickText('Meow', scope.soundsTab);
-
-        // Make sure the backdrop was actually added by going to the backdrops tab
-        await clickXpath('//span[text()="Stage"]');
-        await clickText('Backdrops');
+        // The Stage and its image editor should be selected automatically
         await clickText('Blue Sky', scope.costumesTab);
+
+        const logs = await getLogs();
+        await expect(logs).toEqual([]);
+    });
+
+    test('Selecting the stage shows its backdrops', async () => {
+        await loadUri(uri);
+
+        await clickXpath('//span[text()="Stage"]');
+        await findByText('backdrop1', scope.costumesTab);
 
         const logs = await getLogs();
         await expect(logs).toEqual([]);

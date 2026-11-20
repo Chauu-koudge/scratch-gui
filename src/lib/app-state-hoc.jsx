@@ -9,6 +9,8 @@ import localesReducer, {initLocale, localesInitialState} from '../reducers/local
 import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'openblock-l10n';
+import {venagoLocaleNames} from './venago-locales';
+import {getSavedLocale} from './saved-locale';
 import {detectLocale} from './detect-locale';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -31,7 +33,12 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
             let enhancer;
 
             let initializedLocales = localesInitialState;
-            const locale = detectLocale(Object.keys(locales));
+            const supportedLocales = Object.keys(locales).concat(Object.keys(venagoLocaleNames));
+            // Venago: a language chosen earlier wins over the browser language (URL ?locale= still wins).
+            const savedLocale = getSavedLocale(supportedLocales);
+            const detectedLocale = detectLocale(supportedLocales);
+            const urlHasLocale = /[?&](locale|lang)=/.test(window.location.search);
+            const locale = (savedLocale && !urlHasLocale) ? savedLocale : detectedLocale;
             if (locale !== 'en') {
                 initializedLocales = initLocale(initializedLocales, locale);
             }

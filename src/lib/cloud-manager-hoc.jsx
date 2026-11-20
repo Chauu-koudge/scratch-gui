@@ -11,9 +11,8 @@ import {
 } from '../reducers/project-state';
 
 import {
-    showAlertWithTimeout
-} from '../reducers/alerts';
-
+    showAlertWithTimeout 
+} from '../reducers/alerts';   
 /*
  * Higher Order Component to manage the connection to the cloud server.
  * @param {React.Component} WrappedComponent component to manage VM events for

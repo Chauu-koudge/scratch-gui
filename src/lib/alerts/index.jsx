@@ -18,6 +18,37 @@ const AlertLevels = {
 
 const alerts = [
     {
+        // Venago: shown after "Save now" / "Save as a copy" write the project file.
+        alertId: 'localSaveSuccess',
+        alertType: AlertTypes.STANDARD,
+        clearList: ['localSaveSuccess', 'localSaveError'],
+        content: (
+            <FormattedMessage
+                defaultMessage="Project saved to your computer."
+                description="Message shown after the project was saved to a file on this computer"
+                id="gui.venago.alerts.localSaveSuccess"
+            />
+        ),
+        iconURL: successImage,
+        level: AlertLevels.SUCCESS,
+        maxDisplaySecs: 3
+    },
+    {
+        alertId: 'localSaveError',
+        alertType: AlertTypes.STANDARD,
+        clearList: ['localSaveSuccess', 'localSaveError'],
+        closeButton: true,
+        content: (
+            <FormattedMessage
+                defaultMessage="Could not save the project. Try again, or use “Save to your computer”."
+                description="Message shown when saving the project to a file failed"
+                id="gui.venago.alerts.localSaveError"
+            />
+        ),
+        level: AlertLevels.WARN,
+        maxDisplaySecs: 6
+    },
+    {
         alertId: 'createSuccess',
         alertType: AlertTypes.STANDARD,
         clearList: ['createSuccess', 'creating', 'createCopySuccess', 'creatingCopy',

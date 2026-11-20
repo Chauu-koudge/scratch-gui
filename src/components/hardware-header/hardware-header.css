@@ -21,6 +21,34 @@
 
 .upload-group{
     display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.compile-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid $ui-black-transparent;
+    border-radius: $form-radius;
+    background: $ui-white;
+    cursor: pointer;
+}
+
+.upload-button-disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.compile-button:hover {
+    background: $ui-secondary;
+}
+
+.compile-icon {
+    width: 18px;
+    height: 18px;
 }
 
 .stage-size-toggle-group {
@@ -86,4 +114,12 @@
 
 .stage-button-toggled-off {
     filter: saturate(0);
+}
+
+/* Venago: Undo / Redo before the Upload button, without the separator line. */
+.undo-redo {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    margin-right: 0.25rem;
 }

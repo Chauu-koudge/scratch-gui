@@ -156,9 +156,11 @@ class UploadProgress extends React.Component {
         clearTimeout(this.uploadTimeout);
     }
     handleUploadTimeout () {
+        const timeoutMessage = this.props.intl.formatMessage(messages.uploadTimeout);
         this.setState({
-            text: `${this.state.text}\r\n${this.props.intl.formatMessage(messages.uploadTimeout)}`,
-            phase: PHASES.timeout
+            text: `${this.state.text}\r\n${timeoutMessage}`,
+            phase: PHASES.timeout,
+            abortEnabled: false
         });
         this.props.onUploadError();
         analytics.event({

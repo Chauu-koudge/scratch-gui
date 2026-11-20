@@ -1,9 +1,15 @@
 import {addLocaleData} from 'react-intl';
 
-import {localeData, isRtl} from 'openblock-l10n';
-import editorMessages from 'openblock-l10n/locales/editor-msgs';
+import {localeData, isRtl as isOpenblockRtl} from 'openblock-l10n';
+import openblockEditorMessages from 'openblock-l10n/locales/editor-msgs';
+import {venagoLocaleData, buildEditorMessages, isVenagoRtl} from '../lib/venago-locales';
 
 addLocaleData(localeData);
+addLocaleData(venagoLocaleData);
+
+// Venago: openblock-l10n languages plus the Indian languages (see lib/venago-locales).
+const editorMessages = Object.assign({}, openblockEditorMessages, buildEditorMessages(openblockEditorMessages.en));
+const isRtl = locale => isVenagoRtl(locale) || isOpenblockRtl(locale);
 
 const UPDATE_LOCALES = 'scratch-gui/locales/UPDATE_LOCALES';
 const SELECT_LOCALE = 'scratch-gui/locales/SELECT_LOCALE';
